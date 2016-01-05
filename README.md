@@ -6,3 +6,9 @@
 
 --------------------------------------
 这里首先根据greenrobot的EventBus来熟悉具体的用法，然后做出相应的简化
+1、当方法名以onEvent开头，就表示想要订阅一个事件，比如onEventMainThread就表示订阅者将会在UI线程中调用
+同理其他方法类似
+2、onEventMainThread触发时机是在new Thread()执行完成之后，也就是说当事件发布后onEventMainThread就执行了，那他是如何知道的呢？其实这里和参数有关，也就是说发布事件类型和onEventMainThread接收的参数类型必须是一样的才会执行，这个是一一对应的
+3、这里先简单理解整个执行过程，后面会详细针对源码进行解析：在onCreate里面执行	EventBus.getDefault().register(this);意思是让EventBus扫描当前类，把所有onEvent开头的方法记录下来，如何记录呢？使用Map，Key为方法的参数类型，Value中包含我们的方法。
+这样在onCreate执行完成以后，我们的onEventMainThread就已经以键值对的方式被存储到EventBus中了。
+然后当子线程执行完毕，调用EventBus.getDefault().post(new ItemListEvent(Item.ITEMS))时，EventBus会根据post中实参的类型，去Map中查找对于的方法，于是找到了我们的onEventMainThread，最终调用反射去执行我们的方法
