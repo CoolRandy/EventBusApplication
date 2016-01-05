@@ -16,7 +16,7 @@
 这样在onCreate执行完成以后，我们的onEventMainThread就已经以键值对的方式被存储到EventBus中了。
 然后当子线程执行完毕，调用EventBus.getDefault().post(new ItemListEvent(Item.ITEMS))时，EventBus会根据post中实参的类型，去Map中查找对于的方法，于是找到了我们的onEventMainThread，最终调用反射去执行我们的方法
 
-5、根据EventBus Guide描述可知EventBus有4种ThreadMode：PostThread、MainThread、BackgroundThread和Async。具体的用法就是在前面添加onEvent，分别代表的含义可以具体参考文档说明：这里简要说明：
+4、根据EventBus Guide描述可知EventBus有4种ThreadMode：PostThread、MainThread、BackgroundThread和Async。具体的用法就是在前面添加onEvent，分别代表的含义可以具体参考文档说明：这里简要说明：
 
 onEventMainThread代表这个方法会在UI线程执行
 
