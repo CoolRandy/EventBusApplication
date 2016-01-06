@@ -23,16 +23,18 @@ import java.util.concurrent.Executors;
 /**
  * Creates EventBus instances with custom parameters and also allows to install a custom default EventBus instance.
  * Create a new builder using {@link EventBus#builder()}.
+ * 使用自定义的参数创建EventBus实例  也可以使用默认的builder来创建实例  实际上就是建造者模式
  */
 public class EventBusBuilder {
+    //缓存的线程池
     private final static ExecutorService DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
-    boolean logSubscriberExceptions = true;
-    boolean logNoSubscriberMessages = true;
-    boolean sendSubscriberExceptionEvent = true;
-    boolean sendNoSubscriberEvent = true;
-    boolean throwSubscriberException;
-    boolean eventInheritance = true;
+    boolean logSubscriberExceptions = true;//监听异常日志
+    boolean logNoSubscriberMessages = true;//如果没有订阅者，显示一个Log
+    boolean sendSubscriberExceptionEvent = true;//发送监听到异常事件
+    boolean sendNoSubscriberEvent = true;//如果没有订阅者，就发送一个默认事件
+    boolean throwSubscriberException;//如果失败，抛出异常
+    boolean eventInheritance = true;//event子类是否也能响应订阅者
     ExecutorService executorService = DEFAULT_EXECUTOR_SERVICE;
     List<Class<?>> skipMethodVerificationForClasses;
 
@@ -114,6 +116,7 @@ public class EventBusBuilder {
     /**
      * Installs the default EventBus returned by {@link EventBus#getDefault()} using this builders' values. Must be
      * done only once before the first usage of the default EventBus.
+     * 根据参数创建对象,并赋值给EventBus.defaultInstance, 必须在默认的eventbus对象使用以前调用  只能使用一次
      *
      * @throws EventBusException if there's already a default EventBus instance in place
      */

@@ -56,7 +56,7 @@ final class HandlerPoster extends Handler {
                 PendingPost pendingPost = queue.poll();
                 if (pendingPost == null) {
                     synchronized (this) {
-                        // Check again, this time in synchronized
+                        // Check again, this time in synchronized 双重校验
                         pendingPost = queue.poll();
                         if (pendingPost == null) {
                             handlerActive = false;
@@ -64,7 +64,10 @@ final class HandlerPoster extends Handler {
                         }
                     }
                 }
+                //如果订阅者没有取消注册,则分发消息
                 eventBus.invokeSubscriber(pendingPost);
+
+                //如果在一定时间内仍然没有发完队列中所有的待发送者,则退出
                 long timeInMethod = SystemClock.uptimeMillis() - started;
                 if (timeInMethod >= maxMillisInsideHandleMessage) {
                     if (!sendMessage(obtainMessage())) {

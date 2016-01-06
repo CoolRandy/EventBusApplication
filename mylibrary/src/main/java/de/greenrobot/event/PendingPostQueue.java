@@ -1,9 +1,10 @@
 package de.greenrobot.event;
 
 final class PendingPostQueue {
-    private PendingPost head;
-    private PendingPost tail;
+    private PendingPost head;//待发送对象队列头结点
+    private PendingPost tail;//待发送对象队列尾节点
 
+    //入队操作
     synchronized void enqueue(PendingPost pendingPost) {
         if (pendingPost == null) {
             throw new NullPointerException("null cannot be enqueued");
@@ -18,7 +19,7 @@ final class PendingPostQueue {
         }
         notifyAll();
     }
-
+    //出队操作  加了同步锁，防止多线程竞争
     synchronized PendingPost poll() {
         PendingPost pendingPost = head;
         if (head != null) {

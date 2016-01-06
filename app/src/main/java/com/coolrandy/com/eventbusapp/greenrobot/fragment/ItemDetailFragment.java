@@ -47,7 +47,7 @@ public class ItemDetailFragment extends Fragment
                              Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_item_detail,
-                container, false);
+                container, false    );
         tvDetail = (TextView) rootView.findViewById(R.id.item_detail);
         return rootView;
     }

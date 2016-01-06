@@ -73,6 +73,7 @@ public class EventBus {
     private final boolean eventInheritance;
 
     /** Convenience singleton for apps using a process-wide EventBus instance. */
+    //单例
     public static EventBus getDefault() {
         if (defaultInstance == null) {
             synchronized (EventBus.class) {
@@ -160,6 +161,12 @@ public class EventBus {
         register(subscriber, true, priority);
     }
 
+    /**
+     *
+     * @param subscriber 订阅者
+     * @param sticky  是否粘滞
+     * @param priority 优先级
+     */
     private synchronized void register(Object subscriber, boolean sticky, int priority) {
         List<SubscriberMethod> subscriberMethods = subscriberMethodFinder.findSubscriberMethods(subscriber.getClass());
         for (SubscriberMethod subscriberMethod : subscriberMethods) {
@@ -266,7 +273,8 @@ public class EventBus {
     /** Posts the given event to the event bus. */
     public void post(Object event) {
         PostingThreadState postingState = currentPostingThreadState.get();
-        List<Object> eventQueue = postingState.eventQueue;
+            List<Object> eventQueue = postingState.eventQueue;
+        //将发布的事件添加到事件队列中
         eventQueue.add(event);
 
         if (!postingState.isPosting) {
@@ -389,7 +397,9 @@ public class EventBus {
         return false;
     }
 
+    //找到参数匹配的，利用反射进行调用
     private void postSingleEvent(Object event, PostingThreadState postingState) throws Error {
+        //获取事件的Class类型，作为Map存储的key
         Class<?> eventClass = event.getClass();
         boolean subscriptionFound = false;
         if (eventInheritance) {

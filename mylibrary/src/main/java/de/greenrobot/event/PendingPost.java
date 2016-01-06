@@ -19,11 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class PendingPost {
+    //单例池，复用对象
     private final static List<PendingPost> pendingPostPool = new ArrayList<PendingPost>();
 
-    Object event;
-    Subscription subscription;
-    PendingPost next;
+    Object event;//事件类型
+    Subscription subscription;//订阅者
+    PendingPost next;//队列下一个待发送对象
 
     private PendingPost(Object event, Subscription subscription) {
         this.event = event;
@@ -34,7 +35,7 @@ final class PendingPost {
         synchronized (pendingPostPool) {
             int size = pendingPostPool.size();
             if (size > 0) {
-                PendingPost pendingPost = pendingPostPool.remove(size - 1);
+                PendingPost pendingPost = pendingPostPool.remove(size - 1);//这里获取的是队列最后一个元素，也就是最后新进入队列的元素
                 pendingPost.event = event;
                 pendingPost.subscription = subscription;
                 pendingPost.next = null;
@@ -43,13 +44,13 @@ final class PendingPost {
         }
         return new PendingPost(event, subscription);
     }
-
+    //回收一个待发送对象，并加入到复用池
     static void releasePendingPost(PendingPost pendingPost) {
         pendingPost.event = null;
         pendingPost.subscription = null;
         pendingPost.next = null;
         synchronized (pendingPostPool) {
-            // Don't let the pool grow indefinitely
+            // Don't let the pool grow indefinitely  防止池无限增长
             if (pendingPostPool.size() < 10000) {
                 pendingPostPool.add(pendingPost);
             }
